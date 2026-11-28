@@ -35,6 +35,13 @@ class DesktopHomePage extends StatefulWidget {
 
 const borderColor = Color(0xFF2F65BA);
 
+// Cores do cartao de ajuda (faixa de instalar / atualizar).
+// Para um cartao azul-marinho com texto branco, use:
+//   _cardBgStart = Color(0xFF1E3A6E), _cardBgEnd = Color(0xFF16294D), _cardFg = Colors.white
+const Color _cardBgStart = Color(0xFFF1F3F7);
+const Color _cardBgEnd = Color(0xFFDDE3EC);
+const Color _cardFg = Color(0xFF1E3A6E);
+
 class _DesktopHomePageState extends State<DesktopHomePage>
     with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   final _leftPaneScrollController = ScrollController();
@@ -631,8 +638,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
                 colors: [
-                  Color.fromARGB(255, 226, 66, 188),
-                  Color.fromARGB(255, 244, 114, 124),
+                  _cardBgStart,
+                  _cardBgEnd,
                 ],
               )),
               padding: EdgeInsets.all(20),
@@ -645,7 +652,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                   child: Text(
                                 translate(title),
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color: _cardFg,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15),
                               ).marginOnly(bottom: 6)),
@@ -657,7 +664,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                             translate(content),
                             style: TextStyle(
                                 height: 1.5,
-                                color: Colors.white,
+                                color: _cardFg,
                                 fontWeight: FontWeight.normal,
                                 fontSize: 13),
                           ).marginOnly(bottom: 20)
@@ -672,8 +679,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                       padding: 8,
                                       isOutline: true,
                                       text: translate(btnText),
-                                      textColor: Colors.white,
-                                      borderColor: Colors.white,
+                                      textColor: _cardFg,
+                                      borderColor: _cardFg,
                                       textSize: 20,
                                       radius: 10,
                                       onTap: onPressed,
@@ -692,7 +699,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                         style: TextStyle(
                                             decoration:
                                                 TextDecoration.underline,
-                                            color: Colors.white,
+                                            color: _cardFg,
                                             fontSize: 12),
                                       )).marginOnly(top: 6)),
                             ]
@@ -705,7 +712,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
             child: IconButton(
               icon: Icon(
                 Icons.close,
-                color: Colors.white,
+                color: _cardFg,
                 size: 20,
               ),
               onPressed: closeCard,
