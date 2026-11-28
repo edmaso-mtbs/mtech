@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "M-Tech Suporte Remoto", "Purslane Tech Pte. Ltd." "\0"
-            VALUE "M-Tech Suporte Remoto", "RustDesk Remote Desktop" "\0"
+            VALUE "CompanyName", "M-Tech Business Solution" "\0"
+            VALUE "FileDescription", "Suporte M-Tech" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "rustdesk" "\0"
             VALUE "LegalCopyright", "Copyright © 2026 Purslane Tech Pte. Ltd. All rights reserved." "\0"
             VALUE "OriginalFilename", "rustdesk.exe" "\0"
-            VALUE "M-Tech Suporte Remoto", "RustDesk" "\0"
+            VALUE "ProductName", "Suporte M-Tech" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
