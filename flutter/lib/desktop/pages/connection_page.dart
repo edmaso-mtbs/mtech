@@ -21,6 +21,10 @@ import '../../common/widgets/autocomplete.dart';
 import '../../models/platform_model.dart';
 import '../../desktop/widgets/material_mod_popup_menu.dart' as mod_menu;
 
+// Cores da marca M-Tech
+const Color _mtechNavy = Color(0xFF1E3A6E);
+const Color _mtechRed = Color(0xFFED1C24);
+
 class OnlineStatusWidget extends StatefulWidget {
   const OnlineStatusWidget({Key? key, this.onSvcStatusChanged})
       : super(key: key);
@@ -216,6 +220,9 @@ class _ConnectionPageState extends State<ConnectionPage>
 
   final _menuOpen = false.obs;
 
+  /// false = Conexao Remota (por ID), true = Conexao Local (por IP).
+  final _localMode = false.obs;
+
   @override
   void initState() {
     super.initState();
@@ -311,9 +318,14 @@ class _ConnectionPageState extends State<ConnectionPage>
           children: [
             Row(
               children: [
-                Flexible(child: _buildRemoteIDTextField(context)),
+                SizedBox(width: 360, child: _buildModeSelector()),
               ],
             ).marginOnly(top: 22),
+            Row(
+              children: [
+                Flexible(child: _buildRemoteIDTextField(context)),
+              ],
+            ).marginOnly(top: 12),
             SizedBox(height: 12),
             Divider().paddingOnly(right: 12),
             Expanded(child: PeerTabPage()),
@@ -323,6 +335,54 @@ class _ConnectionPageState extends State<ConnectionPage>
         if (!isOutgoingOnly) OnlineStatusWidget()
       ],
     );
+  }
+
+  /// Seletor: Conexao Remota / Conexao Local.
+  Widget _buildModeSelector() {
+    return Row(
+      children: [
+        Expanded(
+            child: _modeButton('Conexão Remota', 'Pela internet, usando o ID', false)),
+        const SizedBox(width: 10),
+        Expanded(
+            child: _modeButton('Conexão Local', 'Na mesma rede, usando o IP', true)),
+      ],
+    );
+  }
+
+  Widget _modeButton(String label, String sub, bool local) {
+    return Obx(() {
+      final selected = _localMode.value == local;
+      return InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () => _localMode.value = local,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: selected ? _mtechNavy : Colors.transparent,
+            border: Border.all(
+                color: selected ? _mtechRed : Theme.of(context).dividerColor,
+                width: selected ? 2 : 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label,
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: selected ? Colors.white : null)),
+              const SizedBox(height: 2),
+              Text(sub,
+                  style: TextStyle(
+                      fontSize: 11,
+                      color: selected ? Colors.white70 : Colors.grey)),
+            ],
+          ),
+        ),
+      );
+    });
   }
 
   /// Callback for the connect button.
@@ -385,7 +445,15 @@ class _ConnectionPageState extends State<ConnectionPage>
       child: Ink(
         child: Column(
           children: [
-            getConnectionPageTitle(context, false).marginOnly(bottom: 15),
+            Obx(() => _localMode.value
+                ? Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Conexão Local',
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                  ).marginOnly(bottom: 15)
+                : getConnectionPageTitle(context, false)
+                    .marginOnly(bottom: 15)),
             Row(
               children: [
                 Expanded(
@@ -465,7 +533,9 @@ class _ConnectionPageState extends State<ConnectionPage>
                               counterText: '',
                               hintText: _idInputFocused.value
                                   ? null
-                                  : translate('Enter Remote ID'),
+                                  : (_localMode.value
+                                      ? 'IP do computador (ex.: 192.168.0.10)'
+                                      : translate('Enter Remote ID')),
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 13)),
                           controller: fieldTextEditingController,
@@ -548,6 +618,16 @@ class _ConnectionPageState extends State<ConnectionPage>
                 )),
               ],
             ),
+            Obx(() => _localMode.value
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(
+                        'Funciona na mesma rede, sem usar o servidor público. '
+                        'No computador de destino, ative "Habilitar acesso direto por IP" em Configurações > Segurança. '
+                        'Os computadores encontrados na rede aparecem na aba com o ícone de bússola, abaixo.',
+                        style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  )
+                : const SizedBox.shrink()),
             Padding(
               padding: const EdgeInsets.only(top: 13.0),
               child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
