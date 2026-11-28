@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_hbb/models/peer_model.dart';
+import 'package:flutter_hbb/models/peer_tab_model.dart';
 
 import '../../common.dart';
 import '../../common/formatter/id_formatter.dart';
@@ -337,6 +338,19 @@ class _ConnectionPageState extends State<ConnectionPage>
     );
   }
 
+  /// Muda o modo e abre a aba correspondente da lista de computadores:
+  /// Conexao Local -> "Descobertos" (rede local); Remota -> "Recentes".
+  void _setMode(bool local) {
+    _localMode.value = local;
+    final model = gFFI.peerTabModel;
+    final target = local ? PeerTabIndex.lan.index : PeerTabIndex.recent.index;
+    if (model.visibleEnabledOrderedIndexs.contains(target) &&
+        model.currentTab != target) {
+      model.setCurrentTabCachedPeers([]);
+      model.setCurrentTab(target);
+    }
+  }
+
   /// Seletor: Conexao Remota / Conexao Local.
   Widget _buildModeSelector() {
     return Row(
@@ -355,7 +369,7 @@ class _ConnectionPageState extends State<ConnectionPage>
       final selected = _localMode.value == local;
       return InkWell(
         borderRadius: BorderRadius.circular(10),
-        onTap: () => _localMode.value = local,
+        onTap: () => _setMode(local),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           decoration: BoxDecoration(
@@ -624,7 +638,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                     child: Text(
                         'Funciona na mesma rede, sem usar o servidor público. '
                         'No computador de destino, ative "Habilitar acesso direto por IP" em Configurações > Segurança. '
-                        'Os computadores encontrados na rede aparecem na aba com o ícone de bússola, abaixo.',
+                        'Os computadores encontrados na rede aparecem na lista abaixo.',
                         style: const TextStyle(fontSize: 12, color: Colors.grey)),
                   )
                 : const SizedBox.shrink()),
